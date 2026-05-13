@@ -1,3 +1,4 @@
+//Balucan
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.event.*;
@@ -11,7 +12,6 @@ public class mySIF extends JFrame {
 
     JTextField nametxt, coursetxt, sectiontxt;
     JLabel namelbl, courselbl, sectionlbl;
-
     JButton btnadd, btnUpd, btnDel, btnClr;
 
     mySIF() {
@@ -23,7 +23,7 @@ public class mySIF extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // LABELS
+
         namelbl = new JLabel("Name");
         courselbl = new JLabel("Course");
         sectionlbl = new JLabel("Section");
@@ -32,7 +32,7 @@ public class mySIF extends JFrame {
         add(courselbl).setBounds(155, 270, 50, 20);
         add(sectionlbl).setBounds(290, 270, 50, 20);
 
-        // TEXTFIELDS
+
         nametxt = new JTextField();
         coursetxt = new JTextField();
         sectiontxt = new JTextField();
@@ -41,7 +41,7 @@ public class mySIF extends JFrame {
         add(coursetxt).setBounds(155, 290, 125, 20);
         add(sectiontxt).setBounds(290, 290, 125, 20);
 
-        // BUTTONS
+
         btnadd = new JButton("Add");
         btnUpd = new JButton("Update");
         btnDel = new JButton("Delete");
@@ -52,16 +52,14 @@ public class mySIF extends JFrame {
         add(btnDel).setBounds(225, 320, 80, 25);
         add(btnClr).setBounds(340, 320, 70, 25);
 
-        // TABLE MODEL
+
         model = new DefaultTableModel(new String[]{"Name", "Course", "Section"}, 0);
         table = new JTable(model);
 
         scroll = new JScrollPane(table);
         add(scroll).setBounds(20, 15, 410, 240);
 
-        // =========================
-        // 🔥 MOUSE LISTENER HERE
-        // =========================
+
         table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
 
@@ -75,19 +73,19 @@ public class mySIF extends JFrame {
             }
         });
 
-        // BUTTON ACTIONS
-        btnadd.addActionListener(e -> addbtn());
+
+        btnadd.addActionListener(e -> add());
         btnUpd.addActionListener(e -> update());
         btnDel.addActionListener(e -> delete());
-        btnClr.addActionListener(e -> clearFields());
+        btnClr.addActionListener(e -> clear());
 
         read();
 
         setVisible(true);
     }
 
-    // ADD
-    void addbtn() {
+
+    void add() {
         try {
             model.addRow(new Object[]{
                 nametxt.getText(),
@@ -96,14 +94,14 @@ public class mySIF extends JFrame {
             });
 
             saveFile();
-            clearFields();
+            clear();
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error adding data");
         }
     }
 
-    // UPDATE
+
     void update() {
         try {
             int row = table.getSelectedRow();
@@ -118,14 +116,14 @@ public class mySIF extends JFrame {
             model.setValueAt(sectiontxt.getText(), row, 2);
 
             saveFile();
-            clearFields();
+            clear();
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error updating data");
         }
     }
 
-    // DELETE
+
     void delete() {
         try {
             int row = table.getSelectedRow();
@@ -137,7 +135,7 @@ public class mySIF extends JFrame {
 
             model.removeRow(row);
             saveFile();
-            clearFields();
+            clear();
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error deleting data");
@@ -145,14 +143,14 @@ public class mySIF extends JFrame {
     }
 
     // CLEAR
-    void clearFields() {
+    void clear() {
         nametxt.setText("");
         coursetxt.setText("");
         sectiontxt.setText("");
         table.clearSelection();
     }
 
-    // SAVE FILE
+
     void saveFile() {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter("students.txt"));
@@ -171,7 +169,7 @@ public class mySIF extends JFrame {
         }
     }
 
-    // READ FILE
+
     void read() {
         try {
             File file = new File("students.txt");
