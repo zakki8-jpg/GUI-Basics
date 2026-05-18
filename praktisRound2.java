@@ -175,7 +175,7 @@ public class praktisRound2 extends JFrame{
             }
 
             model.setValueAt(year, row, 3);
-            model.setValueAt(txtSubs, row, 4);
+            model.setValueAt(txtSubs.getText(), row, 4);
 
             save();
             clear();
@@ -189,9 +189,13 @@ public class praktisRound2 extends JFrame{
                 JOptionPane.showMessageDialog(null,  "Please select a row first.");
                 return;
             }
-            model.removeRow(row);
-            save();
-            clear();
+            int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this record", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                model.removeRow(row);
+                save();
+                clear();
+            }
+            
         });
     }
     void read() {
