@@ -93,17 +93,18 @@ public class crudPrac extends JFrame{
             BufferedWriter bw = new BufferedWriter(new FileWriter("Srs.txt"));
             for (int i = 0; i < model.getRowCount(); i++) {
                 bw.write(
-                    model.getValueAt(i,0) + "#" +
-                    model.getValueAt(i, 1) + "#" +
-                    model.getValueAt(i, 2) + "#" +
-                    model.getValueAt(i, 3) + "#" +
-                    model.getValueAt(i,4)
+                    model.getValueAt(i, 0) +"#"+
+                    model.getValueAt(i, 1) +"#"+
+                    model.getValueAt(i, 2) +"#"+
+                    model.getValueAt(i, 3) +"#"+
+                    model.getValueAt(i, 4)
                 );
                 bw.newLine();
+
             }
             bw.close();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, e);
+            JOptionPane.showMessageDialog(null, "Error saving file.");
         }
 
     }
@@ -133,12 +134,13 @@ public class crudPrac extends JFrame{
 
             if (rb1.isSelected()) {
                 gender = rb1.getText();
+
             } else if (rb2.isSelected()) {
                 gender = rb2.getText();
             }
 
             model.insertRow(0, new Object [] {
-                name, ID, course, gender, year
+                name,ID,course,year,gender,
             });
 
             save();
@@ -153,25 +155,26 @@ public class crudPrac extends JFrame{
         btnupd.addActionListener(e -> {
             int row = table.getSelectedRow();
             if (row == -1) {
-                JOptionPane.showMessageDialog(null ,"Please select a row first.");
+                JOptionPane.showMessageDialog(null, "Please select a row first.");
                 return;
             }
+            int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to update data?", "Confirm Update", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                model.setValueAt(txtN.getText(), row, 0);
+                model.setValueAt(txtID.getText(), row, 1);
+                model.setValueAt(txtC.getText(), row, 2);
+                model.setValueAt(cbYear.getSelectedItem(), row, 3);
+                String gend = "";
+                if (rb1.isSelected()) {
+                    gend = rb1.getText();
+                } else if (rb2.isSelected()) {
+                    gend = rb2.getText();
+                }
+                model.setValueAt(gend, row, 4);
 
-            model.setValueAt(txtN.getText(), row, 0);
-            model.setValueAt(txtID.getText(), row, 1);
-            model.setValueAt(txtC.getText(), row, 2);
-            model.setValueAt(cbYear.getSelectedItem(), row, 3);
-            String gender = "";
-            if (rb1.isSelected()) {
-                gender = rb1.getText();
-            } else if (rb2.isSelected()) {
-                gender = rb2.getText();
             }
-            model.setValueAt(gender, row,4);
-
             save();
             clear();
-            
         });
 
         
@@ -180,22 +183,20 @@ public class crudPrac extends JFrame{
 
 
     void delete() {
-        btndel.addActionListener( e -> {
+        btndel.addActionListener(e -> {
             int row = table.getSelectedRow();
-
             if (row == -1) {
-                JOptionPane.showMessageDialog(null, "Please select a row first");
-                return;
+                JOptionPane.showMessageDialog(null, "Please select a row first.");
+                return; 
             }
 
-            int confirm = JOptionPane.showConfirmDialog(null, 
-                "Are you sure you want to delete this record?", "Confirm Delete",JOptionPane.YES_NO_OPTION
-            );
-            if (confirm == JOptionPane.YES_OPTION) {
+            int conf = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete data?" , "Confirm Delete", JOptionPane.YES_NO_OPTION);
+            if (conf == JOptionPane.YES_OPTION) {
                 model.removeRow(row);
                 save();
                 clear();
             }
+            
         });
     }
 
@@ -205,20 +206,20 @@ public class crudPrac extends JFrame{
     void read() {
         try {
             File file = new File("Srs.txt");
-            if (!file.exists()) return;
+            if(!file.exists()) return;
 
             BufferedReader br = new BufferedReader(new FileReader("Srs.txt"));
             String line;
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) !=null) {
                 String[] data = line.split("#");
+
                 if (data.length == 5) {
                     model.addRow(data);
-                }
-               
+                }  
             }
             br.close();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, e);
+            JOptionPane.showMessageDialog(null, "Error reading file.");
         }
 
 
@@ -229,21 +230,20 @@ public class crudPrac extends JFrame{
                 public void mouseClicked(MouseEvent e) {
                     int row = table.getSelectedRow();
 
-                    txtN.setText(model.getValueAt(row, 0).toString());
+                    txtN.setText(model.getValueAt(row,0).toString());
                     txtID.setText(model.getValueAt(row, 1).toString());
-                    txtC.setText(model.getValueAt(row,2).toString());
-                    String gend = model.getValueAt(row, 3).toString();
-                
+                    txtC.setText(model.getValueAt(row, 2).toString());
+                    String gend = model.getValueAt(row,3).toString();
                     if (gend.equals("Male")) {
                         rb1.setSelected(true);
+
                     } else if (gend.equals("Female")) {
                         rb2.setSelected(true);
                     }
-                    cbYear.setSelectedItem(model.getValueAt(row,4).toString());
+                    cbYear.setSelectedItem(model.getValueAt(row, 4).toString());
                 }
-                
             });
-        }
+    }
     public static void main(String [] args) {
         new crudPrac();
     }
