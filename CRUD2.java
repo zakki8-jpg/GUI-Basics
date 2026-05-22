@@ -3,6 +3,24 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.table.*;
+import java.util.*;
+
+    class Student {
+         String name, bday, number, gender, status;
+
+            Student(String name, String bday,
+                String number, String gender,
+                String status) {
+
+                this.name = name;
+                this.bday = bday;
+                this.number = number;
+                this.gender = gender;
+                this.status = status;
+            }
+
+    }
+
 public class CRUD2 extends JFrame{
     private static final String filename = "what.txt";
     private static final String dm = "#";
@@ -15,6 +33,7 @@ public class CRUD2 extends JFrame{
     private JScrollPane sp;
     private JRadioButton rb1,rb2;
     private JComboBox<String> cb1;
+    ArrayList<Student> list = new ArrayList<>();
 
     CRUD2() {
         //lbl
@@ -98,10 +117,15 @@ public class CRUD2 extends JFrame{
                 } else if (rb2.isSelected()) {
                     gend = rb2.getText();
             }
-                String status = (String) cb1.getSelectedItem();
+                String status = (String) cb1.getSelectedItem().toString();
+
+                Student s = new Student(
+                    name, bday, num, gend, status
+                );
+                list.add(s);
 
                 model.insertRow(0, new Object [] {
-                    name, bday, num, gend, status
+                    s.name, s.bday, s.number, s.gender, s.status
                 });
             }
             
@@ -119,17 +143,26 @@ public class CRUD2 extends JFrame{
             }
             int conf = JOptionPane.showConfirmDialog(null, "Are you sure you want to update data?", "Confirm update", JOptionPane.YES_NO_OPTION);
             if (conf == JOptionPane.YES_OPTION) {
-                model.setValueAt(txt1.getText(), row, 0);
-                model.setValueAt(txt2.getText(), row, 1);
-                model.setValueAt(txt3.getText(), row, 2);
+                
                 String gend = "";
                 if (rb1.isSelected()) {
                     gend = rb1.getText();
                 } else if (rb2.isSelected()) {
                     gend = rb2.getText();
                 }
-                model.setValueAt(gend, row, 3);
-                model.setValueAt(cb1.getSelectedItem(), row, 4);
+
+                Student s = list.get(row);
+                s.name = txt1.getText();
+                s.bday = txt2.getText();
+                s.number = txt3.getText();
+                s.gender = gend;
+                s.status = cb1.getSelectedItem().toString();
+
+                model.setValueAt(s.name,row,0);
+                model.setValueAt(s.bday,row,1);
+                model.setValueAt(s.number,row,2);
+                model.setValueAt(s.gender,row,3);
+                model.setValueAt(s.status,row,4);
             }
             save();
             clear();
@@ -139,16 +172,19 @@ public class CRUD2 extends JFrame{
         btn3.addActionListener(e -> {
             int row = table.getSelectedRow();
             if (row == -1) {
-                JOptionPane.showMessageDialog(null, "Please select a row first to delete");
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Please select a row first"
+                );
                 return;
             }
-            int conf = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete data?", "Confirm delete", JOptionPane.YES_NO_OPTION);
+            int conf = JOptionPane.showConfirmDialog(null,"Are you sure you want to delete?","Confirm Delete",JOptionPane.YES_NO_OPTION);
             if (conf == JOptionPane.YES_OPTION) {
+                list.remove(row);
                 model.removeRow(row);
                 save();
                 clear();
             }
-            
         });
 
     }
@@ -179,40 +215,62 @@ public class CRUD2 extends JFrame{
         });
     }
     void read() {
-        try{
+        try {
+
             File file = new File(filename);
+
             if (!file.exists()) return;
 
             BufferedReader br = new BufferedReader(new FileReader(filename));
             String line;
             while ((line = br.readLine()) != null) {
+
                 String[] data = line.split(dm);
 
                 if (data.length == 5) {
-                    model.addRow(data);
+
+                    Student s = new Student(
+                            data[0],
+                            data[1],
+                            data[2],
+                            data[3],
+                            data[4]
+                    );
+
+                    list.add(s);
+                    model.addRow(new Object[] {
+                            s.name,
+                            s.bday,
+                            s.number,
+                            s.gender,
+                            s.status
+                    });
                 }
             }
             br.close();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, e);
+
+            JOptionPane.showMessageDialog(null,e);
         }
     }
     void save() {
         try {
+
             BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
-            for (int i = 0; i < model.getRowCount(); i++) {
+            for (Student s : list) {
                 bw.write(
-                    model.getValueAt(i, 0) +dm+
-                    model.getValueAt(i, 1) +dm+
-                    model.getValueAt(i, 2) +dm+
-                    model.getValueAt(i, 3) +dm+ 
-                    model.getValueAt(i, 4)
+                        s.name + dm +
+                        s.bday + dm +
+                        s.number + dm +
+                        s.gender + dm +
+                        s.status
                 );
                 bw.newLine();
             }
             bw.close();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, e);
+
+            JOptionPane.showMessageDialog(null,e);
         }
     }
 
